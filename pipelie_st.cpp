@@ -28,6 +28,7 @@ bool isPrime(unsigned int num)
 }
 
 void Task1(unsigned int N, unsigned int seed , ActiveObject* transform , void* task) {
+    ActiveObject::counter = N;
     (void)task;
     std::mt19937 generator(seed); // Initialize random number generator with seed
     std::uniform_int_distribution<int> distribution(0, 999); // Define range from 0 to 999
@@ -77,7 +78,7 @@ void Task3(ActiveObject* nextAO , void* task) {
 
 }
 
-void Task4(void* task) {
+void Task4(ActiveObject* myAO, void* task) {
     int num = ((int)(task));
     cout << num << endl;
     bool prime = isPrime(num);
@@ -89,6 +90,11 @@ void Task4(void* task) {
     }
     int numTransfer = num + 2;
     cout << numTransfer << endl;
+
+    if(ActiveObject::counter == 1){
+            ActiveObject::stopFlag = true;
+            stop(myAO);
+        }
 }
 
 int main(int argc, char const *argv[])
@@ -127,14 +133,14 @@ int main(int argc, char const *argv[])
     } ,3 , "AO_3");
 
     aObject4.CreateActiveObject([&](void* task) {
-        Task4(task);
+        Task4(&aObject4,task);
     } , 4 , "AO_4");
 
-    aObject1.joinThread();
-    aObject2.joinThread();
-    aObject3.joinThread();
-    aObject4.joinThread();
+    while(!ActiveObject::stopFlag){
 
+
+    }
+    sleep(1);
 
     return 0;
 }

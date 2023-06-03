@@ -10,15 +10,17 @@ class ThreadSafeQueue{
 
 private:
 
-    bool stopFlag;
+    
     std::mutex mtx;             // Mutex for protecting the queue
     std::condition_variable cv; // Condition variable for waiting on the queue
     std::queue<void*> myQueue;  // Queue to hold void pointers
     
 
 public:
+
+    static bool stopFlag;
     string name;
-    ThreadSafeQueue() : stopFlag(false) {}
+    ThreadSafeQueue() {}
     void Enqueue(void* task);
     void* Dequeue();
     void Stop();
@@ -29,4 +31,4 @@ public:
 
 
 
-#endif //OS_MATALA5_THREADSAFEQUEUE_HPP
+#endif //OS_MATALA5_THREADSAFEQUEUE_

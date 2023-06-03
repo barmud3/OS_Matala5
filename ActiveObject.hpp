@@ -17,14 +17,18 @@ private:
     bool stopFlag;
 
 public:
-
+    string name;
     std::function<void(void*)> myFunc;
-    void CreateActiveObject(std::function<void(void*)> func , bool isOB1);
+    void CreateActiveObject(std::function<void(void*)> func , int OBNum , string name);
     bool isStopFlag() const;
     ThreadSafeQueue* getQueue();
     void stop();
-    static void* Loop(void* arg);
-    static void* ThreadFuncWrapper(void* arg);
+    void joinThread();
+    static void* Loop1(void* arg);
+    static void* Loop2(void* arg);
+    static void* Loop3(void* arg);
+    static void* Loop4(void* arg);
+    
 };
 
 

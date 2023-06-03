@@ -1,10 +1,13 @@
 #include "ActiveObject.hpp"
+
+int ActiveObject::counter = -1;
+bool ActiveObject::stopFlag = false;
+
 void ActiveObject::joinThread(){
 
     pthread_join(this->thread, nullptr);
 
 }
-
 
 void ActiveObject::CreateActiveObject(std::function<void(void*)> func , int OBNum , string name) {
     myQueue = new ThreadSafeQueue();
@@ -34,17 +37,8 @@ void ActiveObject::CreateActiveObject(std::function<void(void*)> func , int OBNu
 }
 
 
-
-
 bool ActiveObject::isStopFlag() const {
     return stopFlag;
-}
-
-void stop(ActiveObject* AO){
-
-    AO->stopFlag = true;
-    AO->myQueue->stopCV.notify_all();
-    
 }
 
 void* ActiveObject::Loop2(void* arg) {
@@ -53,6 +47,9 @@ void* ActiveObject::Loop2(void* arg) {
     while (task) {
         AO->myFunc(task);
         task = AO->myQueue->Dequeue();
+        if(ActiveObject::stopFlag == true){
+            stop(AO);
+        }
     }
     return arg;
 }
@@ -63,6 +60,9 @@ void* ActiveObject::Loop3(void* arg) {
     while (task) {
         AO->myFunc(task);
         task = AO->myQueue->Dequeue();
+        if(ActiveObject::stopFlag == true){
+            stop(AO);
+        }
     }
 
     return arg;
@@ -74,8 +74,8 @@ void* ActiveObject::Loop4(void* arg) {
     while (task) {
         AO->myFunc(task);
         task = AO->myQueue->Dequeue();
+        ActiveObject::counter--;
     }
-
     return arg;
 }
 
@@ -89,4 +89,10 @@ void* ActiveObject::Loop1(void* arg) {
 
 ThreadSafeQueue* getQueue(ActiveObject* AO){
     return AO->myQueue;
+}
+
+void stop(ActiveObject* AO){
+    AO->myQueue->stopCV.notify_all();
+    pthread_cancel(AO->thread);
+    
 }

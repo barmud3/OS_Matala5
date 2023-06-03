@@ -60,7 +60,7 @@ The pipeline_st program performs the following steps:
 ## Example
 
 ```
-./pipeline_st 2 123456
+./pipeline_st 1 123456
 
 123456
 false

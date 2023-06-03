@@ -48,7 +48,7 @@ void Task1(unsigned int N, unsigned int seed , ActiveObject* transform , void* t
 }
 
 void Task2(ActiveObject* nextAO , void* task) {
-    int num = ((int)(task));
+    int num = *((int*)(task));
     cout << num << endl;
     bool prime = isPrime(num);
     
@@ -63,7 +63,7 @@ void Task2(ActiveObject* nextAO , void* task) {
 }
 
 void Task3(ActiveObject* nextAO , void* task) {
-    int num = ((int)(task));
+    int num = *((int*)(task));
     cout << num << endl;
     bool prime = isPrime(num);
     
@@ -74,12 +74,10 @@ void Task3(ActiveObject* nextAO , void* task) {
     }
     int* numTransfer = new int(num - 13);
     getQueue(nextAO)->Enqueue(static_cast<void*>(numTransfer));
-
-
 }
 
 void Task4(ActiveObject* myAO, void* task) {
-    int num = ((int)(task));
+    int num = *((int*)(task));
     cout << num << endl;
     bool prime = isPrime(num);
     
@@ -101,7 +99,7 @@ int main(int argc, char const *argv[])
 {
     if (argc < 2 || argc > 3)
     {
-        printf("./st_pipline [N] [random seed] OR ./st_pipline [N]\n");
+        printf("./st_pipline [N] [random seed] *OR* ./st_pipline [N]\n");
         exit(1);
     }
     unsigned int N = stoi(argv[1]);

@@ -17,7 +17,7 @@ bool isPrime(unsigned int num)
         return false;
     }
     
-    for (size_t i = 3; i <= sqrt(num); i++) //Without num 2 that he is even.
+    for (size_t i = 2; i <= sqrt(num); i++)
     {
         if (num%i == 0)
         {
@@ -25,7 +25,6 @@ bool isPrime(unsigned int num)
         }
     }
     return true;
-    
 }
 
 void Task1(unsigned int N, unsigned int seed , ActiveObject* transform , void* task) {
@@ -41,64 +40,65 @@ void Task1(unsigned int N, unsigned int seed , ActiveObject* transform , void* t
     }
     for (size_t i = 0; i < N; i++)
     {
-        cout << "Wait 3 seconds then push new task to AO2's queue" << endl;
-        usleep(3000);
-        transform->getQueue()->Enqueue((void*)(array[i]));
+        usleep(1000);
+        getQueue(transform)->Enqueue((void*)(array[i]));
     }
     
 }
 
 void Task2(ActiveObject* nextAO , void* task) {
-    int num = *((int*)(task));
-    cout << num << endl << endl;
+    int num = ((int)(task));
+    cout << num << endl;
     bool prime = isPrime(num);
     
     if (!prime) {
-        cout << "PRIME : FALSE" << endl;
+        cout << "false" << endl;
     } else {
-        cout << "PRIME : TRUE" << endl;
+        cout << "true" << endl;
     }
-    
-    int numTransfer = num + 11;
+    int* numTransfer = new int(num + 11);
+    getQueue(nextAO)->Enqueue(static_cast<void*>(numTransfer));
 
-    nextAO->getQueue()->Enqueue((void*)(&numTransfer));
-    cout << "CHECK NUM !! " << *(&numTransfer) << endl;
 }
 
 void Task3(ActiveObject* nextAO , void* task) {
-    int num = *((int*)(task));
-    cout << "CHECK NUM !! " << num << endl;
-    int prime = isPrime(num);
+    int num = ((int)(task));
+    cout << num << endl;
+    bool prime = isPrime(num);
+    
     if (!prime) {
-        cout << "PRIME : FALSE" << endl;
+        cout << "false" << endl;
     } else {
-        cout << "PRIME : TRUE" << endl;
+        cout << "true" << endl;
     }
-    int numTransfer = num - 13;
-    nextAO->getQueue()->Enqueue((void*)(&numTransfer));
+    int* numTransfer = new int(num - 13);
+    getQueue(nextAO)->Enqueue(static_cast<void*>(numTransfer));
+
+
 }
 
 void Task4(void* task) {
-    int num = *((int*)(task));
-    int prime = isPrime(num);
-    if (prime != 0) {
-        cout << "PRIME : FALSE" << endl;
+    int num = ((int)(task));
+    cout << num << endl;
+    bool prime = isPrime(num);
+    
+    if (!prime) {
+        cout << "false" << endl;
     } else {
-        cout << "PRIME : TRUE" << endl;
+        cout << "true" << endl;
     }
     int numTransfer = num + 2;
-    cout << "LAST NUM GOT: " << numTransfer << endl;
+    cout << numTransfer << endl;
 }
 
 int main(int argc, char const *argv[])
 {
     if (argc < 2 || argc > 3)
     {
-        printf("./st_pipline [N] [random seed] *OR* ./st_pipline [N]\n");
+        printf("./st_pipline [N] [random seed] OR ./st_pipline [N]\n");
         exit(1);
     }
     unsigned int N = stoi(argv[1]);
-    cout << "N: " << to_string(N) << endl;
     unsigned int seed;
     if (argc == 2) //didn't get random seed 
     {
@@ -138,4 +138,3 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
-

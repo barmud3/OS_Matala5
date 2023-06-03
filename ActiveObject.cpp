@@ -34,41 +34,35 @@ void ActiveObject::CreateActiveObject(std::function<void(void*)> func , int OBNu
 }
 
 
-ThreadSafeQueue* ActiveObject::getQueue() {
-    return myQueue;
-}
+
 
 bool ActiveObject::isStopFlag() const {
     return stopFlag;
 }
 
-void ActiveObject::stop() {
+void stop(ActiveObject* AO){
 
-    this->stopFlag = true;
-    this->getQueue()->stopCV.notify_all();
+    AO->stopFlag = true;
+    AO->myQueue->stopCV.notify_all();
+    
 }
 
 void* ActiveObject::Loop2(void* arg) {
     auto* AO = static_cast<ActiveObject*>(arg);
-    cout << "Thread : " << pthread_self() << " IS : " << AO->name << endl;
-    void* task = AO->getQueue()->Dequeue();
-    cout << "TASK FROM LOOP2 " << to_string(*((int*)task)) << endl;
+    void* task = AO->myQueue->Dequeue();
     while (task) {
         AO->myFunc(task);
-        task = AO->getQueue()->Dequeue();
+        task = AO->myQueue->Dequeue();
     }
     return arg;
 }
 
 void* ActiveObject::Loop3(void* arg) {
     auto* AO = static_cast<ActiveObject*>(arg);
-    cout << "Thread : " << pthread_self() << " IS : " << AO->name << endl;
-    void* task = AO->getQueue()->Dequeue();
-    cout << "TASK FROM LOOP3 " << to_string(*((int*)task)) << endl;
-    cout << "Inside loop, flag: " << AO->isStopFlag() << endl;
+    void* task = AO->myQueue->Dequeue();
     while (task) {
         AO->myFunc(task);
-        task = AO->getQueue()->Dequeue();
+        task = AO->myQueue->Dequeue();
     }
 
     return arg;
@@ -76,12 +70,10 @@ void* ActiveObject::Loop3(void* arg) {
 
 void* ActiveObject::Loop4(void* arg) {
     auto* AO = static_cast<ActiveObject*>(arg);
-    cout << "Thread : " << pthread_self() << " IS : " << AO->name << endl;
-    void* task = AO->getQueue()->Dequeue();
-    cout << "Inside loop, flag: " << AO->isStopFlag() << endl;
+    void* task = AO->myQueue->Dequeue();
     while (task) {
         AO->myFunc(task);
-        task = AO->getQueue()->Dequeue();
+        task = AO->myQueue->Dequeue();
     }
 
     return arg;
@@ -91,7 +83,10 @@ void* ActiveObject::Loop4(void* arg) {
 void* ActiveObject::Loop1(void* arg) {
     
     auto* AO = static_cast<ActiveObject*>(arg);
-    cout << "Thread : " << pthread_self() << " IS : " << AO->name << endl;
     AO->myFunc(nullptr);  // Call the std::function with a dummy argument
     return arg;
+}
+
+ThreadSafeQueue* getQueue(ActiveObject* AO){
+    return AO->myQueue;
 }

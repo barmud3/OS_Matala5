@@ -1,5 +1,3 @@
-ao hpp 
-
 #ifndef OS_MATALA5_ACTIVEOBJECT_HPP
 #define OS_MATALA5_ACTIVEOBJECT_HPP
 
@@ -16,10 +14,12 @@ private:
 
     ThreadSafeQueue* myQueue;
     pthread_t thread;
-    bool stopFlag;
+    
 
 public:
 
+    static bool stopFlag;
+    static int counter;
     string name;
     std::function<void(void*)> myFunc;
     void CreateActiveObject(std::function<void(void*)> func , int OBNum , string name);
